@@ -1,15 +1,3 @@
-import { EmojiButton } from '@joeattardi/emoji-button';
-
-const picker = new EmojiButton();
-const trigger = document.querySelector('.trigger');
-
-picker.on('emoji', selection => {
-  // `selection` object has an `emoji` property
-  // containing the selected emoji
-});
-
-trigger.addEventListener('click', () => picker.togglePicker(trigger));
-
 const displayController = (() => {
     const renderMessage = (message) => {
         document.querySelector("#message").innerHTML = message;
@@ -61,9 +49,17 @@ const Game = (() => {
     let gameOver;
 
     const start = () => {
+        const playerOneEmoji = document.querySelector("#emojiOne").value;
+        const playerTwoEmoji = document.querySelector("#emojiTwo").value;
+        
+        if (playerOneEmoji === playerTwoEmoji) {
+            alert("Each player must choose a unique emoji.");
+            return;
+        }
+        
         players = [
-            createPlayer(document.querySelector("#playerOne").value, players[0].mark),
-            createPlayer(document.querySelector("#playerTwo").value, players[1].mark)
+            createPlayer(document.querySelector("#playerOne").value, playerOneEmoji),
+            createPlayer(document.querySelector("#playerTwo").value, playerTwoEmoji)
         ]
         currentPlayerIndex = 0;
         gameOver = false;
@@ -72,6 +68,7 @@ const Game = (() => {
         squares.forEach((square) => {
             square.addEventListener("click", handleClick);
         })
+        document.querySelector("#playerOne").classList.add("green-text");
     }
 
     const restart = () => {
@@ -102,6 +99,14 @@ const Game = (() => {
         } else if (checkForTie(Gameboard.getGameboard())){
             gameOver = true;
             displayController.renderMessage(`Its a tie!`)
+        }
+
+        if (currentPlayerIndex === 0) {
+            document.querySelector("#playerOne").classList.add("green-text");
+            document.querySelector("#playerTwo").classList.remove("green-text");
+        } else {
+            document.querySelector("#playerTwo").classList.add("green-text");
+            document.querySelector("#playerOne").classList.remove("green-text");
         }
 
         currentPlayerIndex = currentPlayerIndex === 0 ? 1 : 0;
